@@ -7,25 +7,38 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KB Detail co.">
-  <title>KB Detail co. — Estética Automotiva</title>
+  <title>KB Detail co</title>
   <link rel="manifest" id="pwa-manifest">
   <link rel="apple-touch-icon" href="kaik.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- OneSignal SDK v16 -->
+  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
+  <script>
+    window.OneSignalDeferred = window.OneSignalDeferred || [];
+    OneSignalDeferred.push(async function(OneSignal) {
+      await OneSignal.init({
+        appId: "d32b9113-7dbc-4029-9110-ba617fe69593",
+        serviceWorkerPath: "sw.js",
+        serviceWorkerParam: { scope: "./" }
+      });
+      await OneSignal.User.addTag("role", "client");
+    });
+  </script>
+
   <style>
     :root {
       --bg-base: #07090e;
       --glass-bg: rgba(255, 255, 255, 0.06);
-      --glass-bg-elevated: rgba(24, 28, 38, 0.78);
       --glass-border: rgba(255, 255, 255, 0.14);
       --glass-highlight: rgba(255, 255, 255, 0.25);
       --accent: #38bdf8;
       --accent-glow: rgba(56, 189, 248, 0.35);
-      --accent-secondary: #818cf8;
+      --gold: #fbbf24;
       --text-primary: #f8fafc;
       --text-secondary: #94a3b8;
-      --text-muted: #64748b;
       --success: #34d399;
       --danger: #f87171;
       --safe-top: env(safe-area-inset-top, 20px);
@@ -52,7 +65,6 @@
       user-select: none;
     }
 
-    /* Ambient Mesh Orbs */
     .ambient-bg {
       position: fixed;
       inset: 0;
@@ -69,38 +81,15 @@
       animation: float 16s infinite alternate ease-in-out;
     }
 
-    .orb-1 {
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, #0284c7, transparent 70%);
-      top: -60px;
-      left: -80px;
-    }
-
-    .orb-2 {
-      width: 340px;
-      height: 340px;
-      background: radial-gradient(circle, #4f46e5, transparent 70%);
-      top: 38%;
-      right: -110px;
-      animation-delay: -5s;
-    }
-
-    .orb-3 {
-      width: 280px;
-      height: 280px;
-      background: radial-gradient(circle, #0ea5e9, transparent 70%);
-      bottom: -50px;
-      left: 10%;
-      animation-delay: -10s;
-    }
+    .orb-1 { width: 300px; height: 300px; background: radial-gradient(circle, #0284c7, transparent 70%); top: -60px; left: -80px; }
+    .orb-2 { width: 340px; height: 340px; background: radial-gradient(circle, #4f46e5, transparent 70%); top: 38%; right: -110px; animation-delay: -5s; }
+    .orb-3 { width: 280px; height: 280px; background: radial-gradient(circle, #0ea5e9, transparent 70%); bottom: -50px; left: 10%; animation-delay: -10s; }
 
     @keyframes float {
       0% { transform: translate(0, 0) scale(1); }
       100% { transform: translate(25px, 35px) scale(1.1); }
     }
 
-    /* App Container */
     .app-shell {
       position: relative;
       z-index: 1;
@@ -109,7 +98,6 @@
       padding: calc(var(--safe-top) + 12px) 16px calc(var(--safe-bottom) + 100px);
     }
 
-    /* Glass Card Utility */
     .glass {
       background: var(--glass-bg);
       backdrop-filter: blur(24px) saturate(180%);
@@ -118,12 +106,12 @@
       box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 0 var(--glass-highlight);
     }
 
-    /* Top Header */
+    /* Header */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
     .brand {
@@ -144,7 +132,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      cursor: pointer;
     }
 
     .brand-logo-wrap img {
@@ -176,14 +163,45 @@
       box-shadow: 0 0 8px var(--success);
     }
 
-    .install-btn {
-      display: none;
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .gear-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: var(--text-primary);
       cursor: pointer;
+    }
+
+    .gear-btn:active { transform: scale(0.94); }
+
+    /* Promo Banner */
+    .promo-banner {
+      border-radius: 18px;
+      padding: 12px 15px;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, rgba(251, 191, 36, 0.16), rgba(56, 189, 248, 0.08));
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      display: none;
+    }
+
+    .promo-banner strong {
+      display: block;
+      font-size: 13px;
+      color: var(--gold);
+      margin-bottom: 2px;
+    }
+
+    .promo-banner span {
+      font-size: 12px;
+      color: var(--text-primary);
     }
 
     /* Hero Banner */
@@ -191,8 +209,6 @@
       border-radius: 24px;
       padding: 20px;
       margin-bottom: 16px;
-      position: relative;
-      overflow: hidden;
       background: linear-gradient(145deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.03) 100%);
     }
 
@@ -216,7 +232,6 @@
       font-size: 22px;
       font-weight: 800;
       line-height: 1.2;
-      letter-spacing: -0.02em;
       margin-bottom: 6px;
     }
 
@@ -226,7 +241,7 @@
       line-height: 1.45;
     }
 
-    /* Quick Actions Bar (GPS, WhatsApp) */
+    /* Quick Actions Bar */
     .quick-grid {
       display: grid;
       grid-template-columns: 1.3fr 1fr;
@@ -243,13 +258,9 @@
       text-decoration: none;
       color: var(--text-primary);
       cursor: pointer;
-      transition: transform 0.18s ease, background 0.18s ease;
     }
 
-    .quick-btn:active {
-      transform: scale(0.96);
-      background: rgba(255, 255, 255, 0.12);
-    }
+    .quick-btn:active { transform: scale(0.96); }
 
     .quick-icon {
       width: 38px;
@@ -261,30 +272,11 @@
       flex-shrink: 0;
     }
 
-    .icon-gps {
-      background: rgba(56, 189, 248, 0.18);
-      color: var(--accent);
-      border: 1px solid rgba(56, 189, 248, 0.3);
-    }
+    .icon-gps { background: rgba(56, 189, 248, 0.18); color: var(--accent); border: 1px solid rgba(56, 189, 248, 0.3); }
+    .icon-wpp { background: rgba(52, 211, 153, 0.18); color: var(--success); border: 1px solid rgba(52, 211, 153, 0.3); }
 
-    .icon-wpp {
-      background: rgba(52, 211, 153, 0.18);
-      color: var(--success);
-      border: 1px solid rgba(52, 211, 153, 0.3);
-    }
-
-    .quick-info strong {
-      display: block;
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .quick-info span {
-      display: block;
-      font-size: 11px;
-      color: var(--text-secondary);
-      margin-top: 1px;
-    }
+    .quick-info strong { display: block; font-size: 13px; font-weight: 700; }
+    .quick-info span { display: block; font-size: 11px; color: var(--text-secondary); margin-top: 1px; }
 
     /* Section Headings */
     .section-header {
@@ -295,18 +287,10 @@
       padding: 0 2px;
     }
 
-    .section-header h3 {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: -0.01em;
-    }
+    .section-header h3 { font-size: 16px; font-weight: 700; }
+    .section-header span { font-size: 12px; color: var(--text-secondary); }
 
-    .section-header span {
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-
-    /* Vehicle Type Selector (Carro / Moto) */
+    /* Vehicle Type Selector */
     .segmented-control {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -326,19 +310,13 @@
       font-size: 13px;
       font-weight: 700;
       cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 2px;
     }
 
-    .seg-btn small {
-      font-size: 11px;
-      font-weight: 500;
-      opacity: 0.78;
-    }
-
+    .seg-btn small { font-size: 11px; font-weight: 500; opacity: 0.78; }
     .seg-btn.active {
       background: rgba(255, 255, 255, 0.14);
       color: var(--text-primary);
@@ -346,87 +324,25 @@
     }
 
     /* Services List */
-    .services-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-      margin-bottom: 26px;
-    }
-
-    .service-card {
-      border-radius: 24px;
-      padding: 18px;
-      transition: all 0.25s ease;
-      position: relative;
-      cursor: pointer;
-    }
-
+    .services-list { display: flex; flex-direction: column; gap: 14px; margin-bottom: 26px; }
+    .service-card { border-radius: 24px; padding: 18px; }
     .service-card.selected {
       border-color: var(--accent);
       background: linear-gradient(145deg, rgba(56, 189, 248, 0.14), rgba(255, 255, 255, 0.05));
-      box-shadow: 0 12px 32px rgba(2, 132, 199, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3);
     }
 
-    .service-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      margin-bottom: 8px;
-    }
-
-    .service-title-wrap {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .service-title {
-      font-size: 16px;
-      font-weight: 700;
-    }
-
+    .service-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 8px; }
+    .service-title-wrap { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .service-title { font-size: 16px; font-weight: 700; }
     .tag-popular {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 3px 8px;
-      border-radius: 8px;
-      background: linear-gradient(135deg, #38bdf8, #818cf8);
-      color: #050811;
-      text-transform: uppercase;
+      font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 8px;
+      background: linear-gradient(135deg, #38bdf8, #818cf8); color: #050811; text-transform: uppercase;
     }
-
-    .service-price {
-      text-align: right;
-      flex-shrink: 0;
-    }
-
-    .service-price strong {
-      display: block;
-      font-size: 19px;
-      font-weight: 800;
-      color: var(--accent);
-    }
-
-    .service-price span {
-      font-size: 11px;
-      color: var(--text-secondary);
-    }
-
-    .service-desc {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.45;
-      margin-bottom: 14px;
-    }
-
-    .service-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
+    .service-price { text-align: right; flex-shrink: 0; }
+    .service-price strong { display: block; font-size: 19px; font-weight: 800; color: var(--accent); }
+    .service-price span { font-size: 11px; color: var(--text-secondary); }
+    .service-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.45; margin-bottom: 14px; }
+    .service-footer { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
 
     .btn-details {
       background: rgba(255, 255, 255, 0.07);
@@ -444,32 +360,16 @@
     }
 
     .btn-select {
-      background: rgba(56, 189, 248, 0.16);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: var(--accent);
-      padding: 8px 16px;
-      border-radius: 12px;
-      font-family: inherit;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .service-card.selected .btn-select {
       background: var(--accent);
       color: #06101d;
-      border-color: var(--accent);
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 700;
     }
 
-    /* Extras / Serviços Adicionais */
-    .extras-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-      margin-bottom: 26px;
-    }
-
+    /* Extras */
+    .extras-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-bottom: 26px; }
     .extra-card {
       border-radius: 20px;
       padding: 14px 16px;
@@ -478,219 +378,61 @@
       justify-content: space-between;
       gap: 12px;
       cursor: pointer;
-      transition: all 0.2s ease;
     }
-
-    .extra-card.active {
-      border-color: var(--accent);
-      background: rgba(56, 189, 248, 0.14);
-    }
-
-    .extra-info strong {
-      display: block;
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 3px;
-    }
-
-    .extra-info span {
-      display: block;
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.35;
-    }
-
-    .extra-right {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-
-    .extra-price {
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--accent);
-    }
-
+    .extra-card.active { border-color: var(--accent); background: rgba(56, 189, 248, 0.14); }
+    .extra-info strong { display: block; font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+    .extra-info span { display: block; font-size: 12px; color: var(--text-secondary); }
+    .extra-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+    .extra-price { font-size: 14px; font-weight: 800; color: var(--accent); }
     .extra-info-btn {
-      width: 30px;
-      height: 30px;
-      border-radius: 10px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      color: var(--text-primary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
+      width: 30px; height: 30px; border-radius: 10px;
+      background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.14);
+      color: var(--text-primary); display: flex; align-items: center; justify-content: center; cursor: pointer;
     }
 
-    /* Scheduling Section (Weekend Only) */
-    .schedule-card {
-      border-radius: 24px;
-      padding: 18px;
-      margin-bottom: 20px;
-    }
-
+    /* Weekend Scheduling */
+    .schedule-card { border-radius: 24px; padding: 18px; margin-bottom: 20px; }
     .weekend-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--accent);
-      background: rgba(56, 189, 248, 0.12);
-      border: 1px solid rgba(56, 189, 248, 0.28);
-      padding: 4px 10px;
-      border-radius: 99px;
-      margin-bottom: 14px;
+      display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700;
+      color: var(--accent); background: rgba(56, 189, 248, 0.12); border: 1px solid rgba(56, 189, 248, 0.28);
+      padding: 4px 10px; border-radius: 99px; margin-bottom: 14px;
     }
-
-    .days-row {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      margin-bottom: 18px;
-      scrollbar-width: none;
-    }
-
-    .days-row::-webkit-scrollbar {
-      display: none;
-    }
-
+    .days-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 18px; scrollbar-width: none; }
+    .days-row::-webkit-scrollbar { display: none; }
     .day-pill {
-      flex: 0 0 84px;
-      padding: 10px 8px;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      flex: 0 0 88px; padding: 10px 8px; border-radius: 16px;
+      background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center; cursor: pointer;
     }
+    .day-pill.active { background: var(--accent); color: #06101d; border-color: var(--accent); box-shadow: 0 6px 18px var(--accent-glow); }
+    .day-pill span { display: block; font-size: 11px; font-weight: 700; text-transform: uppercase; opacity: 0.85; }
+    .day-pill strong { display: block; font-size: 16px; font-weight: 800; margin-top: 2px; }
 
-    .day-pill.active {
-      background: var(--accent);
-      color: #06101d;
-      border-color: var(--accent);
-      box-shadow: 0 6px 18px var(--accent-glow);
-    }
-
-    .day-pill span {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      text-transform: uppercase;
-      opacity: 0.85;
-    }
-
-    .day-pill strong {
-      display: block;
-      font-size: 16px;
-      font-weight: 800;
-      margin-top: 2px;
-    }
-
-    .slots-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-    }
-
+    .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
     .slot-btn {
-      padding: 11px 6px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      padding: 11px 6px; border-radius: 14px;
+      background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-primary); font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
     }
-
     .slot-btn.busy {
-      opacity: 0.35;
-      text-decoration: line-through;
-      cursor: not-allowed;
-      background: rgba(248, 113, 113, 0.08);
-      border-color: rgba(248, 113, 113, 0.2);
+      opacity: 0.35; text-decoration: line-through; cursor: not-allowed;
+      background: rgba(248, 113, 113, 0.08); border-color: rgba(248, 113, 113, 0.2);
     }
+    .slot-btn.active { background: var(--accent); color: #06101d; border-color: var(--accent); box-shadow: 0 4px 16px var(--accent-glow); }
 
-    .slot-btn.active {
-      background: var(--accent);
-      color: #06101d;
-      border-color: var(--accent);
-      box-shadow: 0 4px 16px var(--accent-glow);
-    }
+    .slot-legend { display: flex; gap: 14px; margin-top: 14px; font-size: 11px; color: var(--text-secondary); }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
 
-    .slot-legend {
-      display: flex;
-      gap: 14px;
-      margin-top: 14px;
-      font-size: 11px;
-      color: var(--text-secondary);
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-    }
-
-    /* Location & Studio Card */
-    .location-card {
-      border-radius: 24px;
-      padding: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .loc-text strong {
-      display: block;
-      font-size: 14px;
-      margin-bottom: 3px;
-    }
-
-    .loc-text p {
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.4;
-    }
-
-    .gps-cta-group {
-      display: flex;
-      gap: 8px;
-    }
-
+    /* Location Card */
+    .location-card { border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+    .loc-text strong { display: block; font-size: 14px; margin-bottom: 3px; }
+    .loc-text p { font-size: 12px; color: var(--text-secondary); line-height: 1.4; }
     .gps-pill {
-      flex: 1;
-      padding: 12px;
-      border-radius: 14px;
-      background: rgba(56, 189, 248, 0.14);
-      border: 1px solid rgba(56, 189, 248, 0.35);
-      color: var(--text-primary);
-      text-decoration: none;
-      font-size: 13px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    .gps-pill:active {
-      transform: scale(0.97);
+      padding: 12px; border-radius: 14px; background: rgba(56, 189, 248, 0.14);
+      border: 1px solid rgba(56, 189, 248, 0.35); color: var(--text-primary);
+      text-decoration: none; font-size: 13px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
     }
 
     /* Floating Bottom Dock */
@@ -703,7 +445,7 @@
       margin: 0 auto;
       border-radius: 24px;
       padding: 12px 14px 12px 18px;
-      background: rgba(15, 20, 32, 0.88);
+      background: rgba(15, 20, 32, 0.9);
       backdrop-filter: blur(28px) saturate(200%);
       -webkit-backdrop-filter: blur(28px) saturate(200%);
       border: 1px solid rgba(255, 255, 255, 0.18);
@@ -715,337 +457,131 @@
       z-index: 50;
     }
 
-    .dock-summary span {
-      display: block;
-      font-size: 11px;
-      color: var(--text-secondary);
-    }
-
-    .dock-summary strong {
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--text-primary);
-    }
-
+    .dock-summary span { display: block; font-size: 11px; color: var(--text-secondary); }
+    .dock-summary strong { font-size: 18px; font-weight: 800; color: var(--text-primary); }
     .dock-btn {
       background: linear-gradient(135deg, #38bdf8, #0284c7);
-      color: #04101d;
-      border: none;
-      border-radius: 16px;
-      padding: 13px 20px;
-      font-family: inherit;
-      font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
+      color: #04101d; border: none; border-radius: 16px; padding: 13px 20px;
+      font-family: inherit; font-size: 14px; font-weight: 800; cursor: pointer;
       box-shadow: 0 6px 20px var(--accent-glow);
-      transition: transform 0.15s ease;
     }
 
-    .dock-btn:active {
-      transform: scale(0.96);
-    }
-
-    /* Apple Bottom Sheet Modal */
+    /* Modals & Sheets */
     .sheet-backdrop {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.72);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      z-index: 100;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.28s ease;
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.76);
+      backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      z-index: 100; opacity: 0; pointer-events: none; transition: opacity 0.28s ease;
     }
-
-    .sheet-backdrop.open {
-      opacity: 1;
-      pointer-events: auto;
-    }
+    .sheet-backdrop.open { opacity: 1; pointer-events: auto; }
 
     .bottom-sheet {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      max-width: 480px;
-      margin: 0 auto;
-      background: rgba(18, 22, 33, 0.96);
-      backdrop-filter: blur(32px) saturate(200%);
+      position: fixed; left: 0; right: 0; bottom: 0; max-width: 480px; margin: 0 auto;
+      background: rgba(18, 22, 33, 0.97); backdrop-filter: blur(32px) saturate(200%);
       -webkit-backdrop-filter: blur(32px) saturate(200%);
-      border-top: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 30px 30px 0 0;
-      padding: 12px 22px calc(var(--safe-bottom) + 24px);
-      z-index: 101;
-      transform: translateY(105%);
-      transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
-      max-height: 90dvh;
-      overflow-y: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.2); border-radius: 30px 30px 0 0;
+      padding: 12px 22px calc(var(--safe-bottom) + 24px); z-index: 101;
+      transform: translateY(105%); transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+      max-height: 92dvh; overflow-y: auto;
     }
+    .bottom-sheet.open { transform: translateY(0); }
 
-    .bottom-sheet.open {
-      transform: translateY(0);
-    }
+    .sheet-handle { width: 40px; height: 5px; border-radius: 99px; background: rgba(255, 255, 255, 0.25); margin: 0 auto 18px; }
+    .sheet-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+    .sheet-subtitle { font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.45; }
 
-    .sheet-handle {
-      width: 40px;
-      height: 5px;
-      border-radius: 99px;
-      background: rgba(255, 255, 255, 0.25);
-      margin: 0 auto 18px;
-    }
-
-    .sheet-title {
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 6px;
-    }
-
-    .sheet-subtitle {
-      font-size: 13px;
-      color: var(--text-secondary);
-      margin-bottom: 18px;
-      line-height: 1.45;
-    }
-
-    .step-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 22px;
-    }
-
+    .step-list { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 22px; }
     .step-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      background: rgba(255, 255, 255, 0.04);
-      padding: 12px;
-      border-radius: 16px;
+      display: flex; align-items: flex-start; gap: 12px;
+      background: rgba(255, 255, 255, 0.04); padding: 12px; border-radius: 16px;
       border: 1px solid rgba(255, 255, 255, 0.08);
     }
-
     .step-num {
-      width: 24px;
-      height: 24px;
-      border-radius: 8px;
-      background: rgba(56, 189, 248, 0.2);
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 800;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
+      width: 24px; height: 24px; border-radius: 8px; background: rgba(56, 189, 248, 0.2);
+      color: var(--accent); font-size: 12px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
+    .step-list li div strong { display: block; font-size: 13px; margin-bottom: 2px; }
+    .step-list li div span { font-size: 12px; color: var(--text-secondary); line-height: 1.35; }
 
-    .step-list li div strong {
-      display: block;
-      font-size: 13px;
-      margin-bottom: 2px;
-    }
-
-    .step-list li div span {
-      font-size: 12px;
-      color: var(--text-secondary);
-      line-height: 1.35;
-    }
-
-    /* Form Inputs inside Checkout Sheet */
-    .form-group {
-      margin-bottom: 12px;
-    }
-
-    .form-group label {
-      display: block;
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--text-secondary);
-      margin-bottom: 5px;
-    }
-
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 5px; }
     .glass-input {
-      width: 100%;
-      padding: 12px 14px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 16px; /* Prevents iOS auto-zoom on focus */
-      outline: none;
+      width: 100%; padding: 12px 14px; border-radius: 14px;
+      background: rgba(255, 255, 255, 0.06); border: 1px solid rgba(255, 255, 255, 0.15);
+      color: var(--text-primary); font-family: inherit; font-size: 16px; outline: none;
     }
+    .glass-input:focus { border-color: var(--accent); }
+    textarea.glass-input { resize: none; min-height: 68px; }
 
-    .glass-input:focus {
-      border-color: var(--accent);
-      background: rgba(255, 255, 255, 0.09);
-    }
-
-    textarea.glass-input {
-      resize: none;
-      min-height: 74px;
+    .coupon-row { display: flex; gap: 8px; margin-bottom: 14px; }
+    .coupon-apply-btn {
+      padding: 0 16px; border-radius: 14px; border: 1px solid rgba(56, 189, 248, 0.4);
+      background: rgba(56, 189, 248, 0.16); color: var(--accent);
+      font-family: inherit; font-size: 13px; font-weight: 800; cursor: pointer;
     }
 
     .summary-box {
-      background: rgba(56, 189, 248, 0.08);
-      border: 1px solid rgba(56, 189, 248, 0.25);
-      border-radius: 18px;
-      padding: 14px;
-      margin-bottom: 16px;
-      font-size: 13px;
+      background: rgba(56, 189, 248, 0.08); border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 18px; padding: 14px; margin-bottom: 14px; font-size: 13px;
     }
-
-    .summary-line {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 6px;
-      color: var(--text-secondary);
-    }
-
+    .summary-line { display: flex; justify-content: space-between; margin-bottom: 6px; color: var(--text-secondary); }
     .summary-line.total {
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid rgba(255, 255, 255, 0.12);
-      color: var(--text-primary);
-      font-weight: 800;
-      font-size: 15px;
-      margin-bottom: 0;
+      margin-top: 8px; padding-top: 8px; border-top: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-primary); font-weight: 800; font-size: 15px; margin-bottom: 0;
     }
 
     .full-btn {
-      width: 100%;
-      padding: 15px;
-      border-radius: 16px;
-      border: none;
-      background: linear-gradient(135deg, #38bdf8, #0284c7);
-      color: #05111e;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
+      width: 100%; padding: 15px; border-radius: 16px; border: none;
+      background: linear-gradient(135deg, #38bdf8, #0284c7); color: #05111e;
+      font-family: inherit; font-size: 15px; font-weight: 800; cursor: pointer;
     }
+    .full-btn:disabled { opacity: 0.6; cursor: wait; }
 
-    /* Confirmation Center Pop-up Modal */
+    /* Center Pop-ups (Welcome Registration & Booking Confirmed) */
     .popup-modal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.9);
-      width: calc(100% - 36px);
-      max-width: 400px;
-      background: rgba(16, 21, 33, 0.96);
+      position: fixed; top: 50%; left: 50%;
+      transform: translate(-50%, -50%) scale(0.92);
+      width: calc(100% - 34px); max-width: 400px;
+      background: rgba(16, 21, 33, 0.98);
       backdrop-filter: blur(32px) saturate(200%);
       -webkit-backdrop-filter: blur(32px) saturate(200%);
       border: 1px solid rgba(255, 255, 255, 0.22);
-      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
-      border-radius: 28px;
-      padding: 26px 22px;
-      text-align: center;
-      z-index: 150;
-      opacity: 0;
-      pointer-events: none;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.8);
+      border-radius: 28px; padding: 24px 20px; text-align: center;
+      z-index: 150; opacity: 0; pointer-events: none;
       transition: all 0.28s cubic-bezier(0.22, 1, 0.36, 1);
     }
-
-    .popup-modal.open {
-      opacity: 1;
-      pointer-events: auto;
-      transform: translate(-50%, -50%) scale(1);
-    }
+    .popup-modal.open { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
 
     .popup-check {
-      width: 64px;
-      height: 64px;
-      border-radius: 20px;
-      background: rgba(52, 211, 153, 0.16);
-      border: 1px solid rgba(52, 211, 153, 0.4);
-      color: var(--success);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 16px;
-      box-shadow: 0 8px 24px rgba(52, 211, 153, 0.25);
+      width: 60px; height: 60px; border-radius: 20px;
+      background: rgba(52, 211, 153, 0.16); border: 1px solid rgba(52, 211, 153, 0.4);
+      color: var(--success); display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 14px;
     }
-
-    .popup-modal h3 {
-      font-size: 20px;
-      font-weight: 800;
-      margin-bottom: 8px;
-      color: var(--text-primary);
-    }
-
-    .popup-modal p {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.5;
-      margin-bottom: 18px;
-    }
+    .popup-modal h3 { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+    .popup-modal p { font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 16px; }
 
     .popup-gps-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      width: 100%;
-      padding: 14px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #38bdf8, #0284c7);
-      color: #05111e;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 800;
-      margin-bottom: 10px;
-      box-shadow: 0 6px 20px var(--accent-glow);
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; padding: 14px; border-radius: 16px;
+      background: linear-gradient(135deg, #38bdf8, #0284c7); color: #05111e;
+      text-decoration: none; font-size: 14px; font-weight: 800; margin-bottom: 10px;
     }
-
     .popup-close-btn {
-      width: 100%;
-      padding: 12px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      color: var(--text-primary);
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
+      width: 100%; padding: 12px; border-radius: 14px;
+      background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.14);
+      color: var(--text-primary); font-family: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
     }
 
-    /* Logo Full Preview Modal */
-    .logo-preview-img {
-      width: 240px;
-      height: 240px;
-      border-radius: 28px;
-      object-fit: cover;
-      border: 2px solid rgba(255, 255, 255, 0.25);
-      margin: 0 auto 14px;
-      display: block;
-      box-shadow: 0 12px 32px rgba(0,0,0,0.6);
-    }
-
-    /* Toast */
     .toast {
-      position: fixed;
-      top: calc(var(--safe-top) + 12px);
-      left: 50%;
-      transform: translate(-50%, -120px);
-      background: rgba(22, 28, 42, 0.95);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 12px 18px;
-      border-radius: 99px;
-      font-size: 13px;
-      font-weight: 600;
-      z-index: 200;
-      transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
-      white-space: nowrap;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.45);
+      position: fixed; top: calc(var(--safe-top) + 12px); left: 50%;
+      transform: translate(-50%, -120px); background: rgba(22, 28, 42, 0.96);
+      backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 12px 18px; border-radius: 99px; font-size: 13px; font-weight: 600;
+      z-index: 200; transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); white-space: nowrap;
     }
-
-    .toast.show {
-      transform: translate(-50%, 0);
-    }
+    .toast.show { transform: translate(-50%, 0); }
   </style>
 </head>
 <body>
@@ -1059,34 +595,46 @@
   <div id="toast" class="toast">Aviso</div>
 
   <main class="app-shell">
-    <!-- Header with 512x512 kaik.jpg Logo in Top-Left -->
+    <!-- Header -->
     <header>
       <div class="brand">
-        <div class="brand-logo-wrap" onclick="openLogoModal()" title="KB Detail co.">
-          <img src="kaik.jpg" width="512" height="512" alt="Logo KB Detail co." onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 fill=%22%230b0f19%22/><text x=%2250%25%22 y=%2254%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%2338bdf8%22 font-family=%22sans-serif%22 font-weight=%22900%22 font-size=%22180%22>KB</text></svg>';">
+        <div class="brand-logo-wrap" title="KB Detail co.">
+          <img src="kaik.jpg" width="512" height="512" alt="KB Detail co." onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 fill=%22%230b0f19%22/><text x=%2250%25%22 y=%2254%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%2338bdf8%22 font-family=%22sans-serif%22 font-weight=%22900%22 font-size=%22180%22>KB</text></svg>';">
         </div>
         <div class="brand-text">
           <h1>KB Detail co.</h1>
-          <p><span class="status-dot"></span> Sábado e Domingo • 08h às 18h</p>
+          <p id="welcomeUserSub"><span class="status-dot"></span> Sábado e Domingo • 08h às 18h</p>
         </div>
       </div>
-      <button id="installBtn" class="glass install-btn">Instalar App</button>
+
+      <div class="header-actions">
+        <!-- Engrenagem para URL do Google Apps Script -->
+        <button class="glass gear-btn" onclick="openConfigSheet()" title="Configurar Planilha">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
     </header>
+
+    <!-- Active Promotion Banner from Google Sheets -->
+    <div id="activePromoBanner" class="promo-banner">
+      <strong id="promoBannerTitle">🔥 Promoção Ativa</strong>
+      <span id="promoBannerDesc"></span>
+    </div>
 
     <!-- Hero -->
     <section class="glass hero-card">
       <div class="hero-badge">✦ Lavagem Detalhada & Cuidado</div>
-      <h2>Seu veículo sempre como novo!</h2>
+      <h2 id="heroGreeting">Seu veículo sempre como novo!</h2>
       <p>Brilho, proteção e cuidado em cada detalhe. Veja como funciona cada protocolo para Carro ou Moto e reserve seu horário de fim de semana.</p>
     </section>
 
-    <!-- Quick Action Buttons (GPS + WhatsApp Proprietário) -->
+    <!-- Quick Action Buttons -->
     <section class="quick-grid">
       <a href="https://maps.app.goo.gl/zR7tFD8TnctzGtNCA" target="_blank" rel="noopener" class="glass quick-btn">
         <div class="quick-icon icon-gps">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
         </div>
         <div class="quick-info">
           <strong>Como Chegar</strong>
@@ -1096,9 +644,7 @@
 
       <a href="https://wa.me/5562986276946?text=Ol%C3%A1%20KB%20Detail%20co.!%20Gostaria%20de%20tirar%20uma%20d%C3%BAvida%20sobre%20a%20lavagem." target="_blank" rel="noopener" class="glass quick-btn">
         <div class="quick-icon icon-wpp">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
-          </svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
         </div>
         <div class="quick-info">
           <strong>Dúvidas</strong>
@@ -1107,10 +653,10 @@
       </a>
     </section>
 
-    <!-- Step 1: Vehicle Category (Carro / Moto) -->
+    <!-- Step 1: Vehicle Type -->
     <div class="section-header">
       <h3>1. Tipo de Veículo</h3>
-      <span>Tabela oficial KB Detail co.</span>
+      <span>Valores atualizados</span>
     </div>
     <div class="glass segmented-control" id="vehicleSelector">
       <button class="seg-btn active" data-type="carro">
@@ -1130,7 +676,7 @@
     </div>
     <div class="services-list" id="servicesContainer"></div>
 
-    <!-- Step 3: Additional Services (From Image) -->
+    <!-- Step 3: Additional Services -->
     <div class="section-header">
       <h3>3. Serviços Adicionais</h3>
       <span>Toque no "i" para detalhes</span>
@@ -1163,52 +709,58 @@
         <strong>KB Detail co. — Estética Automotiva</strong>
         <p>Profissionalismo, atendimento de qualidade e seu veículo em boas mãos. Clique abaixo para abrir direto no GPS.</p>
       </div>
-      <div class="gps-cta-group">
-        <a href="https://maps.app.goo.gl/zR7tFD8TnctzGtNCA" target="_blank" rel="noopener" class="gps-pill">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          Abrir Localização no GPS
-        </a>
-      </div>
+      <a href="https://maps.app.goo.gl/zR7tFD8TnctzGtNCA" target="_blank" rel="noopener" class="gps-pill">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2.2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Abrir Localização no GPS
+      </a>
     </section>
   </main>
 
-  <!-- Floating Bottom Checkout Dock -->
+  <!-- Floating Bottom Dock -->
   <div class="bottom-dock">
     <div class="dock-summary">
-      <span id="dockSubtitle">Lavagem Detalhada • Selecione horário</span>
+      <span id="dockSubtitle">Carro • Escolha um horário</span>
       <strong id="dockTotal">R$ 85,00</strong>
     </div>
     <button class="dock-btn" id="openCheckoutBtn">Agendar</button>
   </div>
 
-  <!-- Modal Backdrop -->
+  <!-- Backdrop -->
   <div class="sheet-backdrop" id="backdrop"></div>
 
-  <!-- Sheet 1: How the Wash / Service Works -->
+  <!-- Sheet 1: How the Wash Works -->
   <div class="bottom-sheet" id="detailsSheet">
     <div class="sheet-handle"></div>
-    <h3 class="sheet-title" id="detailTitle">Nome do Protocolo</h3>
-    <p class="sheet-subtitle" id="detailSubtitle">Descrição completa do protocolo.</p>
+    <h3 class="sheet-title" id="detailTitle">Protocolo</h3>
+    <p class="sheet-subtitle" id="detailSubtitle"></p>
     <ul class="step-list" id="detailSteps"></ul>
-    <button class="full-btn" id="selectFromDetailBtn">Entendi, Fechar</button>
+    <button class="full-btn" onclick="closeAllModals()">Entendi, Fechar</button>
   </div>
 
-  <!-- Sheet 2: Booking Form (Nome, Telefone, Carro/Moto, Observação) -->
+  <!-- Sheet 2: Booking Form -->
   <div class="bottom-sheet" id="checkoutSheet">
     <div class="sheet-handle"></div>
     <h3 class="sheet-title">Agendar na KB Detail co.</h3>
-    <p class="sheet-subtitle">Preencha seus dados abaixo para confirmar a reserva do seu horário.</p>
+    <p class="sheet-subtitle">Confirme seus dados e reserve seu horário na agenda.</p>
 
     <div class="summary-box" id="checkoutSummary"></div>
 
     <div class="form-group">
-      <label for="clientName">Seu Nome *</label>
-      <input type="text" id="clientName" class="glass-input" placeholder="Ex: João Silva" autocomplete="name">
+      <label>Cupom de Desconto (Opcional)</label>
+      <div class="coupon-row">
+        <input type="text" id="couponInput" class="glass-input" placeholder="Ex: KBDETAIL10" style="text-transform: uppercase;">
+        <button type="button" class="coupon-apply-btn" onclick="applyCouponCode()">Aplicar</button>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="clientName">Seu Primeiro Nome *</label>
+      <input type="text" id="clientName" class="glass-input" placeholder="Ex: João">
     </div>
 
     <div class="form-group">
       <label for="clientPhone">Seu Telefone / WhatsApp *</label>
-      <input type="tel" id="clientPhone" class="glass-input" placeholder="Ex: (62) 99999-9999" autocomplete="tel">
+      <input type="tel" id="clientPhone" class="glass-input" placeholder="Ex: (62) 99999-9999">
     </div>
 
     <div class="form-group">
@@ -1218,13 +770,40 @@
 
     <div class="form-group">
       <label for="washNotes">Observação da Lavagem (Opcional)</label>
-      <textarea id="washNotes" class="glass-input" placeholder="Ex: Atenção extra nas rodas, banco de couro, sujeira pesada..."></textarea>
+      <textarea id="washNotes" class="glass-input" placeholder="Ex: Atenção extra nas rodas, sujeira pesada..."></textarea>
     </div>
 
     <button class="full-btn" id="confirmBookingBtn">Enviar e Confirmar Horário</button>
   </div>
 
-  <!-- Center Pop-up: Booking Received Confirmation + GPS Icon -->
+  <!-- Sheet 3: Gear Config (Apps Script URL) -->
+  <div class="bottom-sheet" id="configSheet">
+    <div class="sheet-handle"></div>
+    <h3 class="sheet-title">⚙️ Conexão Banco de Dados</h3>
+    <p class="sheet-subtitle">Cole abaixo a URL do Google Apps Script (/exec) para sincronizar horários, preços e cupons.</p>
+    <div class="form-group">
+      <label for="scriptUrlInput">URL do Web App (.gs)</label>
+      <input type="url" id="scriptUrlInput" class="glass-input" placeholder="https://script.google.com/macros/s/.../exec">
+    </div>
+    <button class="full-btn" onclick="saveScriptUrl()">Salvar e Sincronizar</button>
+  </div>
+
+  <!-- Pop-up 1: Client Quick Registration (First Name + Phone) -->
+  <div class="popup-modal" id="registerPopup" style="text-align: left;">
+    <h3 style="text-align:center;">Bem-vindo à KB Detail co.</h3>
+    <p style="text-align:center;">Faça seu cadastro rápido para visualizar horários e agendar sua lavagem.</p>
+    <div class="form-group">
+      <label for="regFirstName">Seu Primeiro Nome *</label>
+      <input type="text" id="regFirstName" class="glass-input" placeholder="Ex: Lucas">
+    </div>
+    <div class="form-group">
+      <label for="regPhone">Seu Telefone / WhatsApp *</label>
+      <input type="tel" id="regPhone" class="glass-input" placeholder="Ex: (62) 99999-9999">
+    </div>
+    <button type="button" class="full-btn" onclick="submitClientRegistration()">Entrar no App</button>
+  </div>
+
+  <!-- Pop-up 2: Booking Received Confirmation + GPS Icon -->
   <div class="popup-modal" id="successPopup">
     <div class="popup-check">
       <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
@@ -1232,7 +811,7 @@
       </svg>
     </div>
     <h3>Horário Recebido e Marcado!</h3>
-    <p id="popupMessage">A empresa <strong>KB Detail co.</strong> recebeu o seu horário e ele já está marcado. Clique no ícone de GPS abaixo para traçar sua rota até nós.</p>
+    <p id="popupMessage"></p>
 
     <a href="https://maps.app.goo.gl/zR7tFD8TnctzGtNCA" target="_blank" rel="noopener" class="popup-gps-btn">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
@@ -1241,33 +820,19 @@
       Abrir Localização no GPS
     </a>
 
-    <button type="button" class="popup-close-btn" id="closePopupBtn">Concluir</button>
-  </div>
-
-  <!-- Center Pop-up: Logo Preview 512x512 -->
-  <div class="popup-modal" id="logoPopup">
-    <img src="kaik.jpg" width="512" height="512" alt="KB Detail co." class="logo-preview-img" onerror="this.onerror=null;this.src='data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 fill=%22%230b0f19%22/><text x=%2250%25%22 y=%2254%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%2338bdf8%22 font-family=%22sans-serif%22 font-weight=%22900%22 font-size=%22180%22>KB</text></svg>';">
-    <h3>KB Detail co.</h3>
-    <p>Estética Automotiva • Lavagem Detalhada de Carros e Motos.</p>
-    <button type="button" class="popup-close-btn" onclick="closeAllModals()">Fechar</button>
+    <button type="button" class="popup-close-btn" onclick="closeAllModals()">Concluir</button>
   </div>
 
   <script>
-    // 1. Prevent Double-Tap Zoom & Pinch Zoom
+    // Prevent Double-Tap Zoom
     let lastTouchEnd = 0;
-    document.addEventListener('touchend', function (event) {
+    document.addEventListener('touchend', function (e) {
       const now = Date.now();
-      if (now - lastTouchEnd <= 300) {
-        event.preventDefault();
-      }
+      if (now - lastTouchEnd <= 300) e.preventDefault();
       lastTouchEnd = now;
     }, { passive: false });
 
-    document.addEventListener('gesturestart', function (e) {
-      e.preventDefault();
-    });
-
-    // 2. Dynamic PWA Manifest & Service Worker using kaik.jpg
+    // PWA Manifest
     const manifestData = {
       name: "KB Detail co. — Estética Automotiva",
       short_name: "KB Detail co.",
@@ -1275,57 +840,41 @@
       display: "standalone",
       background_color: "#07090e",
       theme_color: "#07090e",
-      orientation: "portrait",
-      icons: [{
-        src: "kaik.jpg",
-        sizes: "512x512",
-        type: "image/jpeg",
-        purpose: "any maskable"
-      }]
+      icons: [{ src: "kaik.jpg", sizes: "512x512", type: "image/jpeg" }]
     };
-    const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
-    document.getElementById('pwa-manifest').setAttribute('href', URL.createObjectURL(manifestBlob));
+    document.getElementById('pwa-manifest').setAttribute('href', URL.createObjectURL(new Blob([JSON.stringify(manifestData)], { type: 'application/json' })));
 
-    if ('serviceWorker' in navigator) {
-      const swCode = `
-        self.addEventListener('install', e => self.skipWaiting());
-        self.addEventListener('activate', e => self.clients.claim());
-        self.addEventListener('fetch', e => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
-      `;
-      const swBlob = new Blob([swCode], { type: 'application/javascript' });
-      navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
+    // Storage Keys
+    const KEY_SCRIPT_URL = "kb_detail_gas_url";
+    const KEY_CLIENT_PROFILE = "kb_detail_client_profile";
+
+    function getScriptUrl() {
+      return localStorage.getItem(KEY_SCRIPT_URL) || "";
     }
 
-    let deferredPrompt;
-    const installBtn = document.getElementById('installBtn');
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      installBtn.style.display = 'block';
-    });
-    installBtn.addEventListener('click', async () => {
-      if (!deferredPrompt) return;
-      deferredPrompt.prompt();
-      await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      installBtn.style.display = 'none';
-    });
+    function getClientProfile() {
+      try {
+        return JSON.parse(localStorage.getItem(KEY_CLIENT_PROFILE) || "null");
+      } catch (e) {
+        return null;
+      }
+    }
 
-    // 3. Protocols Data (Strictly matching the KB Detail co. image)
+    // Default Catalog (Synced with Google Sheets when connected)
     const CATALOG = {
       carro: {
         main: {
-          id: 'carro_detalhada',
+          id: 'carro_main',
           name: 'Lavagem Detalhada — Carro',
           price: 85,
           duration: '1h 30min',
           shortDesc: 'Pré-lavagem Snow Foam, detalhamento de rodas, limpeza interna completa e proteção de pintura.',
           fullIntro: 'Protocolo exclusivo KB Detail co. para carros. Remove toda a sujeira sem causar micro-riscos e devolve o aspecto de carro novo.',
           steps: [
-            { title: 'Pré-Lavagem com Snow Foam', desc: 'Aplicação de espuma densa de pH neutro que desprende barro, poeira e fuligem sem atrito na lataria.' },
+            { title: 'Pré-Lavagem com Snow Foam', desc: 'Espuma densa de pH neutro que desprende barro, poeira e fuligem sem atrito na lataria.' },
             { title: 'Detalhamento de Rodas, Pinças e Caixas', desc: 'Limpeza minuciosa com pincéis de cerdas macias nas rodas, parafusos, caixas de roda e pneus.' },
-            { title: 'Esfregação Técnica & Cantos', desc: 'Lavagem segura com luva de microfibra, detalhamento de grades, emblemas, retrovisores e batentes de porta.' },
-            { title: 'Aspiração & Acabamento Interno', desc: 'Aspiração completa de bancos e carpetes, limpeza técnica do painel, hidratação de pneus e brilho final.' }
+            { title: 'Esfregação Técnica & Cantos', desc: 'Lavagem segura com luva de microfibra, detalhamento de grades, emblemas e batentes de porta.' },
+            { title: 'Aspiração & Acabamento Interno', desc: 'Aspiração completa de bancos e carpetes, limpeza técnica do painel e hidratação de pneus.' }
           ]
         },
         extras: [
@@ -1337,7 +886,7 @@
             fullIntro: 'Tratamento restaurador para para-choques, molduras, churrasqueira do para-brisa e frisos externos ressecados.',
             steps: [
               { title: 'Limpeza Desengraxante', desc: 'Remoção de ceras antigas, gorduras e resíduos impregnados nos poros do plástico.' },
-              { title: 'Aplicação de Revitalizador UV', desc: 'Condicionamento profundo com acabamento acetinado seco ao toque, que não sai na primeira chuva.' }
+              { title: 'Aplicação de Revitalizador UV', desc: 'Condicionamento profundo com acabamento acetinado seco ao toque.' }
             ]
           },
           {
@@ -1345,10 +894,10 @@
             name: 'Cristalização de Vidros',
             price: 30,
             shortDesc: 'Repelência de água e máxima visibilidade na chuva.',
-            fullIntro: 'Cria uma película hidrorrepelente no para-brisa e vidros, fazendo as gotas de chuva deslizarem com o vento.',
+            fullIntro: 'Cria uma película hidrorrepelente no para-brisa e vidros, fazendo as gotas de chuva deslizarem.',
             steps: [
-              { title: 'Descontaminação do Vidro', desc: 'Remoção de marcas d’água leves e oleosidade acumulada da estrada.' },
-              { title: 'Selante Hidrorrepelente', desc: 'Aplicação e lustro do cristalizador para aumentar a segurança e visibilidade dirigindo sob chuva.' }
+              { title: 'Descontaminação do Vidro', desc: 'Remoção de marcas d’água leves e oleosidade acumulada.' },
+              { title: 'Selante Hidrorrepelente', desc: 'Aplicação e lustro do cristalizador para máxima visibilidade sob chuva.' }
             ]
           },
           {
@@ -1358,25 +907,25 @@
             shortDesc: 'Limpeza técnica segura do cofre e proteção de mangueiras.',
             fullIntro: 'Limpeza detalhada do cofre do motor sem uso de jatos agressivos em módulos eletrônicos.',
             steps: [
-              { title: 'Proteção de Componentes Sensíveis', desc: 'Isolamento preventivo de alternador, central eletrônica e sensores antes da limpeza.' },
-              { title: 'Pincelamento & Verniz de Motor', desc: 'Remoção de graxa e poeira com produtos biodegradáveis e aplicação de protetor térmico nos plásticos e mangueiras.' }
+              { title: 'Proteção de Componentes Sensíveis', desc: 'Isolamento preventivo de alternador, central eletrônica e sensores.' },
+              { title: 'Pincelamento & Verniz de Motor', desc: 'Remoção de graxa e aplicação de protetor térmico nos plásticos e mangueiras.' }
             ]
           }
         ]
       },
       moto: {
         main: {
-          id: 'moto_detalhada',
+          id: 'moto_main',
           name: 'Lavagem Detalhada — Moto',
           price: 65,
           duration: '1h 15min',
           shortDesc: 'Limpeza minuciosa de carenagens, motor, escapamento, rodas, raios e lubrificação.',
-          fullIntro: 'Cuidado extremo em cada parafuso e componente exposto da sua motocicleta, respeitando partes elétricas e pintura.',
+          fullIntro: 'Cuidado extremo em cada parafuso e componente exposto da sua motocicleta.',
           steps: [
-            { title: 'Pré-Lavagem & Desengraxe Seguro', desc: 'Espuma ativa de pH neutro nas carenagens e desengraxe controlado na relação, balança e motor.' },
-            { title: 'Detalhamento com Pincéis Finos', desc: 'Limpeza profunda de aletas do motor, pinças de freio, raios, cubo de roda, painel e comandos.' },
-            { title: 'Secagem com Microfibra & Soprador', desc: 'Remoção total da água em parafusos e frestas para evitar oxidação e manchas.' },
-            { title: 'Proteção de Pintura & Relação', desc: 'Aplicação de cera protetora nas carenagens e acabamento impecável para rodar brilhando.' }
+            { title: 'Pré-Lavagem & Desengraxe Seguro', desc: 'Espuma ativa de pH neutro nas carenagens e desengraxe controlado na relação e motor.' },
+            { title: 'Detalhamento com Pincéis Finos', desc: 'Limpeza profunda de aletas do motor, pinças de freio, raios, painel e comandos.' },
+            { title: 'Secagem com Microfibra & Soprador', desc: 'Remoção total da água em parafusos e frestas para evitar oxidação.' },
+            { title: 'Proteção de Pintura & Relação', desc: 'Aplicação de cera protetora nas carenagens e acabamento impecável.' }
           ]
         },
         extras: [
@@ -1385,66 +934,128 @@
             name: 'Revitalização de Plásticos',
             price: 20,
             shortDesc: 'Devolve o preto intenso e protege contra o sol.',
-            fullIntro: 'Ideal para para-lamas, rabeta, painel, punhos e partes plásticas expostas constantemente ao sol.',
+            fullIntro: 'Ideal para para-lamas, rabeta, painel, punhos e partes plásticas expostas ao sol.',
             steps: [
               { title: 'Descontaminação da Superfície', desc: 'Limpeza profunda para abrir os poros do plástico e remover poeira incrustada.' },
-              { title: 'Proteção UV Seca ao Toque', desc: 'Aplicação de revitalizador que devolve o aspecto de fábrica sem deixar escorregadio.' }
+              { title: 'Proteção UV Seca ao Toque', desc: 'Aplicação de revitalizador que devolve o aspecto de fábrica.' }
             ]
           }
         ]
       }
     };
 
-    // 4. App State
+    let activeCoupons = [
+      { Codigo: 'KBDETAIL10', DescontoPercent: 10, Ativo: true }
+    ];
+    let bookedSlotsFromDB = [];
+
     let state = {
       vehicleType: 'carro',
       extras: new Set(),
       selectedDayIndex: 0,
-      selectedSlot: null
+      selectedSlot: null,
+      appliedCoupon: null
     };
 
-    // Generate ONLY Saturdays and Sundays (Next 6 weekend days)
+    // Generate Weekend Days (Saturday & Sunday only)
     const WEEKEND_DAYS = [];
     const baseSlots = ['08:00', '09:30', '11:00', '13:30', '15:00', '16:30'];
-
     let checkDate = new Date();
     while (WEEKEND_DAYS.length < 6) {
-      const dow = checkDate.getDay(); // 0 = Domingo, 6 = Sábado
+      const dow = checkDate.getDay();
       if (dow === 6 || dow === 0) {
         const isToday = checkDate.toDateString() === new Date().toDateString();
         const dayName = dow === 6 ? 'Sábado' : 'Domingo';
         const dayNum = String(checkDate.getDate()).padStart(2, '0');
         const monthNum = String(checkDate.getMonth() + 1).padStart(2, '0');
-        const idx = WEEKEND_DAYS.length;
-
-        // Realistic busy slots example
-        const busySet = new Set();
-        if (idx === 0) {
-          busySet.add('09:30');
-          busySet.add('15:00');
-        } else if (idx === 1) {
-          busySet.add('11:00');
-        }
-
         WEEKEND_DAYS.push({
+          dayName: dayName,
           label: isToday ? `Hoje (${dayName.slice(0,3)})` : dayName,
           fullTitle: `${dayName} (${dayNum}/${monthNum})`,
           dateStr: `${dayNum}/${monthNum}`,
-          slots: baseSlots.map(time => ({ time, busy: busySet.has(time) }))
+          slots: baseSlots.map(time => ({ time, busy: false }))
         });
       }
       checkDate.setDate(checkDate.getDate() + 1);
     }
 
-    // 5. Formatting & Rendering
-    function formatBRL(val) {
-      return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    function formatBRL(v) {
+      return Number(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    // Sync from Google Sheets
+    async function syncFromGoogleSheets() {
+      const url = getScriptUrl();
+      if (!url) return;
+      try {
+        const res = await fetch(url);
+        const data = await res.json();
+        if (!data.ok) return;
+
+        // Update prices from sheet
+        if (Array.isArray(data.precos)) {
+          data.precos.forEach(p => {
+            if (p.ID === 'carro_main') CATALOG.carro.main.price = Number(p.Preco) || 85;
+            if (p.ID === 'moto_main') CATALOG.moto.main.price = Number(p.Preco) || 65;
+            const cExt = CATALOG.carro.extras.find(e => e.id === p.ID);
+            if (cExt) cExt.price = Number(p.Preco) || cExt.price;
+            const mExt = CATALOG.moto.extras.find(e => e.id === p.ID);
+            if (mExt) mExt.price = Number(p.Preco) || mExt.price;
+          });
+        }
+
+        // Update active promo banner
+        if (Array.isArray(data.promocoes)) {
+          const activePromo = data.promocoes.find(pr => pr.Ativo === true || String(pr.Ativo).toUpperCase() === 'TRUE');
+          const banner = document.getElementById('activePromoBanner');
+          if (activePromo) {
+            document.getElementById('promoBannerTitle').textContent = `🔥 ${activePromo.Titulo}`;
+            document.getElementById('promoBannerDesc').textContent = activePromo.Descricao;
+            banner.style.display = 'block';
+          } else {
+            banner.style.display = 'none';
+          }
+        }
+
+        // Update coupons
+        if (Array.isArray(data.cupons)) {
+          activeCoupons = data.cupons.filter(c => c.Ativo === true || String(c.Ativo).toUpperCase() === 'TRUE');
+        }
+
+        // Mark already booked slots from Google Sheets
+        if (Array.isArray(data.agendamentos)) {
+          bookedSlotsFromDB = data.agendamentos;
+          WEEKEND_DAYS.forEach(wd => {
+            wd.slots.forEach(s => {
+              const isTaken = bookedSlotsFromDB.some(ag =>
+                (String(ag.Data) === wd.dateStr || String(ag.Dia) === wd.dayName) &&
+                String(ag.Horario) === s.time &&
+                String(ag.Status) !== 'cancelado'
+              );
+              s.busy = isTaken;
+            });
+          });
+        }
+
+        renderMainService();
+        renderExtras();
+        renderSlots();
+        updateDock();
+      } catch (err) {
+        console.warn("Falha ao sincronizar com Google Sheets:", err);
+      }
     }
 
     function renderMainService() {
       const srv = CATALOG[state.vehicleType].main;
-      const container = document.getElementById('servicesContainer');
-      container.innerHTML = `
+      document.getElementById('servicesContainer').innerHTML = `
         <article class="glass service-card selected">
           <div class="service-top">
             <div class="service-title-wrap">
@@ -1470,8 +1081,7 @@
 
     function renderExtras() {
       const extras = CATALOG[state.vehicleType].extras;
-      const container = document.getElementById('extrasContainer');
-      container.innerHTML = extras.map(ext => {
+      document.getElementById('extrasContainer').innerHTML = extras.map(ext => {
         const active = state.extras.has(ext.id);
         return `
           <div class="glass extra-card ${active ? 'active' : ''}" onclick="toggleExtra('${ext.id}')">
@@ -1481,7 +1091,7 @@
             </div>
             <div class="extra-right">
               <span class="extra-price">+ ${formatBRL(ext.price)}</span>
-              <button type="button" class="extra-info-btn" title="Como funciona" onclick="event.stopPropagation(); openServiceDetails('${ext.id}')">
+              <button type="button" class="extra-info-btn" onclick="event.stopPropagation(); openServiceDetails('${ext.id}')">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
               </button>
             </div>
@@ -1491,22 +1101,18 @@
     }
 
     function renderDays() {
-      const container = document.getElementById('daysContainer');
-      container.innerHTML = WEEKEND_DAYS.map((d, idx) => `
+      document.getElementById('daysContainer').innerHTML = WEEKEND_DAYS.map((d, idx) => `
         <div class="day-pill ${state.selectedDayIndex === idx ? 'active' : ''}" onclick="selectDay(${idx})">
           <span>${d.label}</span>
           <strong>${d.dateStr}</strong>
         </div>
       `).join('');
-
-      const activeDay = WEEKEND_DAYS[state.selectedDayIndex];
-      document.getElementById('selectedDateLabel').textContent = activeDay.fullTitle;
+      document.getElementById('selectedDateLabel').textContent = WEEKEND_DAYS[state.selectedDayIndex].fullTitle;
     }
 
     function renderSlots() {
-      const container = document.getElementById('slotsContainer');
       const day = WEEKEND_DAYS[state.selectedDayIndex];
-      container.innerHTML = day.slots.map(s => {
+      document.getElementById('slotsContainer').innerHTML = day.slots.map(s => {
         const isActive = state.selectedSlot === s.time && !s.busy;
         return `
           <button type="button"
@@ -1518,26 +1124,29 @@
       }).join('');
     }
 
-    function calculateTotal() {
+    function calculateTotals() {
       const cat = CATALOG[state.vehicleType];
-      let total = cat.main.price;
+      let subtotal = cat.main.price;
       state.extras.forEach(id => {
         const found = cat.extras.find(e => e.id === id);
-        if (found) total += found.price;
+        if (found) subtotal += found.price;
       });
-      return total;
+      let discount = 0;
+      if (state.appliedCoupon) {
+        discount = Math.round((subtotal * Number(state.appliedCoupon.DescontoPercent)) / 100);
+      }
+      return { subtotal, discount, finalTotal: Math.max(0, subtotal - discount) };
     }
 
     function updateDock() {
-      const total = calculateTotal();
+      const { finalTotal } = calculateTotals();
       const day = WEEKEND_DAYS[state.selectedDayIndex];
       const vehLabel = state.vehicleType === 'carro' ? 'Carro' : 'Moto';
       const timeInfo = state.selectedSlot ? `${day.label} às ${state.selectedSlot}` : 'Escolha um horário';
       document.getElementById('dockSubtitle').textContent = `${vehLabel} • ${timeInfo}`;
-      document.getElementById('dockTotal').textContent = formatBRL(total);
+      document.getElementById('dockTotal').textContent = formatBRL(finalTotal);
     }
 
-    // 6. User Actions
     document.querySelectorAll('#vehicleSelector .seg-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         document.querySelectorAll('#vehicleSelector .seg-btn').forEach(b => b.classList.remove('active'));
@@ -1571,137 +1180,229 @@
       updateDock();
     }
 
-    // Modals & Bottom Sheets Control
+    // Modals & Sheets
     const backdrop = document.getElementById('backdrop');
-    const detailsSheet = document.getElementById('detailsSheet');
-    const checkoutSheet = document.getElementById('checkoutSheet');
-    const successPopup = document.getElementById('successPopup');
-    const logoPopup = document.getElementById('logoPopup');
-
     function closeAllModals() {
       backdrop.classList.remove('open');
-      detailsSheet.classList.remove('open');
-      checkoutSheet.classList.remove('open');
-      successPopup.classList.remove('open');
-      logoPopup.classList.remove('open');
+      document.querySelectorAll('.bottom-sheet, .popup-modal').forEach(el => el.classList.remove('open'));
     }
 
-    backdrop.addEventListener('click', closeAllModals);
-    document.getElementById('selectFromDetailBtn').addEventListener('click', closeAllModals);
-    document.getElementById('closePopupBtn').addEventListener('click', closeAllModals);
-
-    function openLogoModal() {
-      backdrop.classList.add('open');
-      logoPopup.classList.add('open');
-    }
+    backdrop.addEventListener('click', () => {
+      // Do not allow closing registration popup until user enters first name and phone
+      if (!getClientProfile()) return;
+      closeAllModals();
+    });
 
     function openServiceDetails(id) {
       const cat = CATALOG[state.vehicleType];
       const item = id === 'main' ? cat.main : cat.extras.find(e => e.id === id);
       if (!item) return;
-
       document.getElementById('detailTitle').textContent = item.name;
       document.getElementById('detailSubtitle').textContent = item.fullIntro + (item.duration ? ` (Tempo médio: ${item.duration})` : '');
-
       document.getElementById('detailSteps').innerHTML = item.steps.map((st, idx) => `
         <li>
           <div class="step-num">${idx + 1}</div>
-          <div>
-            <strong>${st.title}</strong>
-            <span>${st.desc}</span>
-          </div>
+          <div><strong>${st.title}</strong><span>${st.desc}</span></div>
         </li>
       `).join('');
-
       backdrop.classList.add('open');
-      detailsSheet.classList.add('open');
+      document.getElementById('detailsSheet').classList.add('open');
     }
 
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2600);
+    // Gear Config Sheet
+    function openConfigSheet() {
+      document.getElementById('scriptUrlInput').value = getScriptUrl();
+      backdrop.classList.add('open');
+      document.getElementById('configSheet').classList.add('open');
     }
 
-    // Open Booking Form Sheet
+    async function saveScriptUrl() {
+      const url = document.getElementById('scriptUrlInput').value.trim();
+      localStorage.setItem(KEY_SCRIPT_URL, url);
+      closeAllModals();
+      showToast('URL salva! Sincronizando planilha...');
+      await syncFromGoogleSheets();
+    }
+
+    // Client Initial Registration (First Name + Phone)
+    function checkClientRegistration() {
+      const profile = getClientProfile();
+      if (!profile) {
+        backdrop.classList.add('open');
+        document.getElementById('registerPopup').classList.add('open');
+      } else {
+        applyProfileToUI(profile);
+      }
+    }
+
+    function applyProfileToUI(profile) {
+      document.getElementById('heroGreeting').textContent = `Olá, ${profile.firstName}! Seu veículo sempre como novo.`;
+      document.getElementById('clientName').value = profile.firstName;
+      document.getElementById('clientPhone').value = profile.phone;
+    }
+
+    async function submitClientRegistration() {
+      const firstName = document.getElementById('regFirstName').value.trim().split(' ')[0];
+      const phone = document.getElementById('regPhone').value.trim();
+      if (!firstName || !phone) {
+        showToast('Preencha seu primeiro nome e telefone');
+        return;
+      }
+      const profile = { firstName, phone };
+      localStorage.setItem(KEY_CLIENT_PROFILE, JSON.stringify(profile));
+      applyProfileToUI(profile);
+      closeAllModals();
+      showToast(`Bem-vindo, ${firstName}!`);
+
+      const url = getScriptUrl();
+      if (url) {
+        fetch(url, {
+          method: 'POST',
+          body: JSON.stringify({ action: 'register_client', firstName, phone })
+        }).catch(() => {});
+      }
+    }
+
+    // Coupon Application
+    function applyCouponCode() {
+      const code = document.getElementById('couponInput').value.trim().toUpperCase();
+      if (!code) {
+        showToast('Digite um código de cupom');
+        return;
+      }
+      const found = activeCoupons.find(c => String(c.Codigo).toUpperCase() === code);
+      if (!found) {
+        state.appliedCoupon = null;
+        showToast('Cupom inválido ou expirado');
+      } else {
+        state.appliedCoupon = found;
+        showToast(`Cupom ${found.Codigo} aplicado (${found.DescontoPercent}% OFF)!`);
+      }
+      renderCheckoutSummary();
+      updateDock();
+    }
+
+    function renderCheckoutSummary() {
+      const cat = CATALOG[state.vehicleType];
+      const day = WEEKEND_DAYS[state.selectedDayIndex];
+      const { discount, finalTotal } = calculateTotals();
+
+      let extrasHtml = '';
+      state.extras.forEach(id => {
+        const ext = cat.extras.find(e => e.id === id);
+        if (ext) {
+          extrasHtml += `<div class="summary-line"><span>+ ${ext.name}</span><span>${formatBRL(ext.price)}</span></div>`;
+        }
+      });
+
+      const discountHtml = state.appliedCoupon
+        ? `<div class="summary-line" style="color:var(--success);"><span>Cupom (${state.appliedCoupon.Codigo})</span><span>- ${formatBRL(discount)}</span></div>`
+        : '';
+
+      document.getElementById('checkoutSummary').innerHTML = `
+        <div class="summary-line"><span>Protocolo</span><strong>${cat.main.name}</strong></div>
+        <div class="summary-line"><span>Data e Horário</span><strong>${day.fullTitle} às ${state.selectedSlot}</strong></div>
+        ${extrasHtml}
+        ${discountHtml}
+        <div class="summary-line total"><span>Total</span><span>${formatBRL(finalTotal)}</span></div>
+      `;
+    }
+
     document.getElementById('openCheckoutBtn').addEventListener('click', () => {
       if (!state.selectedSlot) {
         showToast('Selecione um horário disponível de Sábado ou Domingo');
         document.getElementById('slotsContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
         return;
       }
-
-      const cat = CATALOG[state.vehicleType];
-      const day = WEEKEND_DAYS[state.selectedDayIndex];
-      let total = cat.main.price;
-
-      let extrasHtml = '';
-      state.extras.forEach(id => {
-        const ext = cat.extras.find(e => e.id === id);
-        if (ext) {
-          total += ext.price;
-          extrasHtml += `<div class="summary-line"><span>+ ${ext.name}</span><span>${formatBRL(ext.price)}</span></div>`;
-        }
-      });
-
-      document.getElementById('checkoutSummary').innerHTML = `
-        <div class="summary-line"><span>Protocolo</span><strong>${cat.main.name}</strong></div>
-        <div class="summary-line"><span>Data e Horário</span><strong>${day.fullTitle} às ${state.selectedSlot}</strong></div>
-        ${extrasHtml}
-        <div class="summary-line total"><span>Total</span><span>${formatBRL(total)}</span></div>
-      `;
-
+      renderCheckoutSummary();
       backdrop.classList.add('open');
-      checkoutSheet.classList.add('open');
+      document.getElementById('checkoutSheet').classList.add('open');
     });
 
-    // Confirm Booking Locally -> Show Pop-up with KB Detail co. message + GPS icon
-    document.getElementById('confirmBookingBtn').addEventListener('click', () => {
-      const name = document.getElementById('clientName').value.trim();
+    // Submit Booking to Google Sheets + Trigger Owner Notification
+    document.getElementById('confirmBookingBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('confirmBookingBtn');
+      const client = document.getElementById('clientName').value.trim();
       const phone = document.getElementById('clientPhone').value.trim();
       const vehicle = document.getElementById('carModel').value.trim();
-      const notes = document.getElementById('washNotes').value.trim();
+      const obs = document.getElementById('washNotes').value.trim();
 
-      if (!name || !phone || !vehicle) {
+      if (!client || !phone || !vehicle) {
         showToast('Preencha nome, telefone e qual o veículo');
         return;
       }
 
+      const cat = CATALOG[state.vehicleType];
       const day = WEEKEND_DAYS[state.selectedDayIndex];
       const bookedTime = state.selectedSlot;
+      const { finalTotal } = calculateTotals();
 
-      // Mark slot as booked locally
+      const selectedNames = [cat.main.name];
+      state.extras.forEach(id => {
+        const ext = cat.extras.find(e => e.id === id);
+        if (ext) selectedNames.push(ext.name);
+      });
+
+      btn.disabled = true;
+      btn.textContent = 'Salvando na agenda...';
+
+      const url = getScriptUrl();
+      if (url) {
+        try {
+          await fetch(url, {
+            method: 'POST',
+            body: JSON.stringify({
+              action: 'create_booking',
+              client,
+              phone,
+              vehicle,
+              type: state.vehicleType === 'carro' ? 'Carro' : 'Moto',
+              day: day.dayName,
+              dateStr: day.dateStr,
+              time: bookedTime,
+              services: selectedNames.join(' + '),
+              obs,
+              total: finalTotal,
+              coupon: state.appliedCoupon ? state.appliedCoupon.Codigo : ''
+            })
+          });
+        } catch (err) {
+          console.error(err);
+        }
+      }
+
       const slotObj = day.slots.find(s => s.time === bookedTime);
       if (slotObj) slotObj.busy = true;
 
-      // Update popup message with client details
       document.getElementById('popupMessage').innerHTML = `
-        Olá <strong>${name}</strong>! A empresa <strong>KB Detail co.</strong> recebeu o seu horário para <strong>${day.fullTitle} às ${bookedTime}</strong> (${vehicle}) e ele já está marcado!${notes ? `<br><small style="opacity:0.8;">Obs: ${notes}</small>` : ''}<br><br>Toque no ícone de GPS abaixo para chegar até nós:
+        Olá <strong>${client}</strong>! A empresa <strong>KB Detail co.</strong> recebeu o seu horário para <strong>${day.fullTitle} às ${bookedTime}</strong> (${vehicle}) e ele já está marcado!${obs ? `<br><small style="opacity:0.8;">Obs: ${obs}</small>` : ''}<br><br>Toque no ícone de GPS abaixo para chegar até nós:
       `;
 
-      // Reset form & slot selection
-      document.getElementById('clientName').value = '';
-      document.getElementById('clientPhone').value = '';
       document.getElementById('carModel').value = '';
       document.getElementById('washNotes').value = '';
       state.selectedSlot = null;
+      state.appliedCoupon = null;
+      document.getElementById('couponInput').value = '';
+
+      btn.disabled = false;
+      btn.textContent = 'Enviar e Confirmar Horário';
 
       renderSlots();
       updateDock();
 
-      // Switch from Checkout Sheet to Confirmation Pop-up
-      checkoutSheet.classList.remove('open');
+      document.getElementById('checkoutSheet').classList.remove('open');
       backdrop.classList.add('open');
-      successPopup.classList.add('open');
+      document.getElementById('successPopup').classList.add('open');
     });
 
-    // Initialize App
+    // Boot
     renderMainService();
     renderExtras();
     renderDays();
     renderSlots();
     updateDock();
+    checkClientRegistration();
+    syncFromGoogleSheets();
   </script>
 </body>
 </html>
