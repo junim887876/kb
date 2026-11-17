@@ -7,26 +7,12 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="KB Detail co.">
-  <title>KB Detail co</title>
+  <title>KB Detail usuario</title>
   <link rel="manifest" id="pwa-manifest">
   <link rel="apple-touch-icon" href="kaik.jpg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
-  <!-- OneSignal SDK v16 -->
-  <script src="https://cdn.onesignal.com/sdks/web/v16/OneSignalSDK.page.js" defer></script>
-  <script>
-    window.OneSignalDeferred = window.OneSignalDeferred || [];
-    OneSignalDeferred.push(async function(OneSignal) {
-      await OneSignal.init({
-        appId: "d32b9113-7dbc-4029-9110-ba617fe69593",
-        serviceWorkerPath: "sw.js",
-        serviceWorkerParam: { scope: "./" }
-      });
-      await OneSignal.User.addTag("role", "client");
-    });
-  </script>
 
   <style>
     :root {
@@ -608,7 +594,6 @@
       </div>
 
       <div class="header-actions">
-        <!-- Engrenagem para URL do Google Apps Script -->
         <button class="glass gear-btn" onclick="openConfigSheet()" title="Configurar Planilha">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
@@ -780,7 +765,7 @@
   <div class="bottom-sheet" id="configSheet">
     <div class="sheet-handle"></div>
     <h3 class="sheet-title">⚙️ Conexão Banco de Dados</h3>
-    <p class="sheet-subtitle">Cole abaixo a URL do Google Apps Script (/exec) para sincronizar horários, preços e cupons.</p>
+    <p class="sheet-subtitle">URL do Google Apps Script (/exec) conectada para sincronizar horários, preços e cupons.</p>
     <div class="form-group">
       <label for="scriptUrlInput">URL do Web App (.gs)</label>
       <input type="url" id="scriptUrlInput" class="glass-input" placeholder="https://script.google.com/macros/s/.../exec">
@@ -844,12 +829,13 @@
     };
     document.getElementById('pwa-manifest').setAttribute('href', URL.createObjectURL(new Blob([JSON.stringify(manifestData)], { type: 'application/json' })));
 
-    // Storage Keys
+    // Google Apps Script URL & Storage Keys
+    const DEFAULT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMhC5Wln07eTRPw0oiZzXGQC1zBkqFsCQMwun9n8L0uydQlTFIf7XU4R-QBQTjbICowQ/exec";
     const KEY_SCRIPT_URL = "kb_detail_gas_url";
     const KEY_CLIENT_PROFILE = "kb_detail_client_profile";
 
     function getScriptUrl() {
-      return localStorage.getItem(KEY_SCRIPT_URL) || "";
+      return localStorage.getItem(KEY_SCRIPT_URL) || DEFAULT_SCRIPT_URL;
     }
 
     function getClientProfile() {
@@ -1188,7 +1174,6 @@
     }
 
     backdrop.addEventListener('click', () => {
-      // Do not allow closing registration popup until user enters first name and phone
       if (!getClientProfile()) return;
       closeAllModals();
     });
@@ -1217,7 +1202,7 @@
     }
 
     async function saveScriptUrl() {
-      const url = document.getElementById('scriptUrlInput').value.trim();
+      const url = document.getElementById('scriptUrlInput').value.trim() || DEFAULT_SCRIPT_URL;
       localStorage.setItem(KEY_SCRIPT_URL, url);
       closeAllModals();
       showToast('URL salva! Sincronizando planilha...');
@@ -1319,7 +1304,7 @@
       document.getElementById('checkoutSheet').classList.add('open');
     });
 
-    // Submit Booking to Google Sheets + Trigger Owner Notification
+    // Submit Booking to Google Sheets
     document.getElementById('confirmBookingBtn').addEventListener('click', async () => {
       const btn = document.getElementById('confirmBookingBtn');
       const client = document.getElementById('clientName').value.trim();
